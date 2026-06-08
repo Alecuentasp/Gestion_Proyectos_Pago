@@ -1,48 +1,30 @@
-import os
-import pandas as pd
+name: Generar reporte mensual
 
-def calcular_pagos(input_csv, output_excel):
-    # Crear carpeta de salida si no existe
-    os.makedirs(os.path.dirname(output_excel), exist_ok=True)
+on:
+  workflow_dispatch:   # Permite ejecutarlo manualmente desde la pestaña Actions
 
-    # Leer datos de facturación
-    df = pd.read_csv(input_csv)
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-    resultados = []
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
 
-    for _, fila in df.iterrows():
-        valor = fila['Valor_Facturado']
-        impuesto = fila['Impuesto(%)'] / 100
-        ganancia = fila['Ganancia(%)'] / 100
-        gastos = fila['Gastos_Indirectos(%)'] / 100
-        participacion = fila['Participacion(%)'] / 100
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-        # Fondo salarial
-        fondo = valor * (1 - impuesto - ganancia - gastos)
+      - name: Instalar dependencias
+        run: pip install pandas openpyxl
 
-        # Salario bruto total (77%)
-        salario_bruto_total = fondo * 0.77
+      - name: Ejecutar script de cálculo
+        run: python scripts/calculo_pagos.py data/ejemplo_facturacion.csv reports/reporte_mensual.xlsx
 
-        # Pago por trabajador
-        pago = salario_bruto_total * participacion
-
-        resultados.append({
-            "Proyecto": fila['Proyecto'],
-            "Etapa": fila['Etapa'],
-            "Trabajador": fila['Trabajador'],
-            "Valor Facturado": valor,
-            "Fondo Salarial": round(fondo, 2),
-            "Salario Bruto Total": round(salario_bruto_total, 2),
-            "Pago Asignado": round(pago, 2)
-        })
-
-    # Convertir a DataFrame y exportar
-    reporte = pd.DataFrame(resultados)
-    reporte.to_excel(output_excel, index=False)
-
-    # Mensaje de confirmación en logs
-    print(f"✅ Reporte generado correctamente en: {output_excel}")
-
-if __name__ == "__main__":
-    calcular_pagos("data/ejemplo_facturacion.csv", "reports/reporte_mensual.xlsx")
+      - name: Subir reporte
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte_mensual
+          path: reports/reporte_mensual.xlsx
 
