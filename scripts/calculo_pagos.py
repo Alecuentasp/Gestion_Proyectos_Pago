@@ -1,18 +1,44 @@
-# Datos de ejemplo
-valor_facturado = 10000
-impuesto = 0.11
-ganancia = 0.30
-gastos_indirectos = 0.15
-participacion = {"Juan": 0.4, "Maria": 0.6}
+import os
+import pandas as pd
 
-# Paso 1: deducciones
-neto = valor_facturado * (1 - impuesto - ganancia - gastos_indirectos)
+def calcular_pagos(input_csv, output_excel):
+    # Crear carpeta de salida si no existe
+    os.makedirs(os.path.dirname(output_excel), exist_ok=True)
 
-# Paso 2: fondo salarial
-fondo_salarial = neto
-salario_bruto_total = fondo_salarial * 0.77
+    # Leer datos de facturación
+    df = pd.read_csv(input_csv)
 
-# Paso 3: distribución
-for trabajador, porcentaje in participacion.items():
-    pago = salario_bruto_total * porcentaje
-    print(trabajador, pago)
+    resultados = []
+
+    for _, fila in df.iterrows():
+        valor = fila['Valor_Facturado']
+        impuesto = fila['Impuesto(%)'] / 100
+        ganancia = fila['Ganancia(%)'] / 100
+        gastos = fila['Gastos_Indirectos(%)'] / 100
+        participacion = fila['Participacion(%)'] / 100
+
+        # Fondo salarial
+        fondo = valor * (1 - impuesto - ganancia - gastos)
+
+        # Salario bruto total (77%)
+        salario_bruto_total = fondo * 0.77
+
+        # Pago por trabajador
+        pago = salario_bruto_total * participacion
+
+        resultados.append({
+            "Proyecto": fila['Proyecto'],
+            "Etapa": fila['Etapa'],
+            "Trabajador": fila['Trabajador'],
+            "Valor Facturado": valor,
+            "Fondo Salarial": round(fondo, 2),
+            "Salario Bruto Total": round(salario_bruto_total, 2),
+            "Pago Asignado": round(pago, 2)
+        })
+
+    # Convertir a DataFrame y exportar
+    reporte = pd.DataFrame(resultados)
+    reporte.to_excel(output_excel, index=False)
+
+if __name__ == "__main__":
+    calcular_pagos("data/ejemplo_facturacion.csv", "reports/reporte_mensual.xlsx")
