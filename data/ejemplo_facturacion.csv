@@ -1,0 +1,11 @@
+Proyecto,Etapa,Valor_Facturado,Impuesto(%),Ganancia(%),Gastos_Indirectos(%),Trabajador,Participacion(%)
+ProyectoA,Etapa1,10000,11,30,15,Juan,40
+ProyectoA,Etapa1,10000,11,30,15,María,60
+ProyectoA,Etapa2,8000,11,25,10,Juan,50
+ProyectoA,Etapa2,8000,11,25,10,María,50
+ProyectoB,Etapa1,15000,11,20,12,Carlos,70
+ProyectoB,Etapa1,15000,11,20,12,Ana,30
+ProyectoC,Etapa1,12000,11,30,15,Pedro,60
+ProyectoC,Etapa1,12000,11,30,15,Luis,40
+ProyectoC,Etapa2,9000,11,28,10,Pedro,50
+ProyectoC,Etapa2,9000,11,28,10,Luis,50
