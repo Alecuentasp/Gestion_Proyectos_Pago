@@ -40,5 +40,8 @@ def calcular_pagos(input_csv, output_excel):
     reporte = pd.DataFrame(resultados)
     reporte.to_excel(output_excel, index=False)
 
+    # Mensaje de confirmación en logs
+    print(f"✅ Reporte generado correctamente en: {output_excel}")
+
 if __name__ == "__main__":
     calcular_pagos("data/ejemplo_facturacion.csv", "reports/reporte_mensual.xlsx")
