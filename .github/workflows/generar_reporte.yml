@@ -22,7 +22,6 @@ jobs:
 
       - name: Ejecutar script de cálculo
         run: python scripts/calculo_pagos.py data/ejemplo_facturacion.csv reports/reporte_mensual.xlsx
-
 - name: Subir reporte
   uses: actions/upload-artifact@v4
   with:
