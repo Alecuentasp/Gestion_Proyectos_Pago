@@ -1,1 +1,11 @@
 
+gestion-proyectos-pagos/
+├── .github/
+│   └── workflows/
+│       └── generar_reporte.yml
+├── scripts/
+│   └── calculo_pagos.py
+├── data/
+│   └── ejemplo_facturacion.csv
+├── reports/
+│   └── reporte_mensual.xlsx
