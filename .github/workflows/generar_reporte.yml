@@ -1,11 +1,30 @@
+name: Generar reporte mensual
 
-gestion-proyectos-pagos/
-├── .github/
-│   └── workflows/
-│       └── generar_reporte.yml
-├── scripts/
-│   └── calculo_pagos.py
-├── data/
-│   └── ejemplo_facturacion.csv
-├── reports/
-│   └── reporte_mensual.xlsx
+on:
+  workflow_dispatch:   # Permite ejecutarlo manualmente desde la pestaña Actions
+  schedule:
+    - cron: "0 0 1 * *"   # Se ejecuta automáticamente cada 1ro de mes a medianoche UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: pip install pandas openpyxl
+
+      - name: Ejecutar script de cálculo
+        run: python scripts/calculo_pagos.py data/ejemplo_facturacion.csv reports/reporte_mensual.xlsx
+
+      - name: Subir reporte
+        uses: actions/upload-artifact@v3
+        with:
+          name: reporte_mensual
+          path: reports/reporte_mensual.xlsx
