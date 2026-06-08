@@ -1,7 +1,10 @@
 name: Generar reporte mensual
 
 on:
-  workflow_dispatch:   # Permite ejecutarlo manualmente desde la pestaña Actions
+  push:
+    paths:
+      - 'data/ejemplo_facturacion.csv'   # Se dispara solo si cambia el CSV
+  workflow_dispatch:                     # También se puede lanzar manualmente
 
 jobs:
   build:
@@ -20,11 +23,15 @@ jobs:
         run: pip install pandas openpyxl
 
       - name: Ejecutar script de cálculo
-        run: python scripts/calculo_pagos.py data/ejemplo_facturacion.csv reports/reporte_mensual.xlsx
+        run: |
+          FECHA=$(date +%Y-%m-%d_%H-%M)
+          python scripts/calculo_pagos.py data/ejemplo_facturacion.csv reports/reporte_${FECHA}.xlsx
 
-      - name: Subir reporte
-        uses: actions/upload-artifact@v4
-        with:
-          name: reporte_mensual
-          path: reports/reporte_mensual.xlsx
-
+      - name: Commit y push del reporte
+        run: |
+          FECHA=$(date +%Y-%m-%d_%H-%M)
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add reports/reporte_${FECHA}.xlsx
+          git commit -m "Reporte generado automáticamente el $FECHA"
+          git push
