@@ -2,12 +2,14 @@ import os
 import pandas as pd
 
 def calcular_pagos(input_csv, output_excel):
+    import os
+    import pandas as pd
+
     # Crear carpeta de salida si no existe
     os.makedirs(os.path.dirname(output_excel), exist_ok=True)
 
-    # Leer datos de facturación
     df = pd.read_csv(input_csv)
-
+ 
     resultados = []
 
     for _, fila in df.iterrows():
